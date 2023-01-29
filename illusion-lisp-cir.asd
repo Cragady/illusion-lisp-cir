@@ -8,6 +8,8 @@
   :components ((:module "src"
                 :components
                 ((:file "package")
+                  (:file "utils")
+                  (:file "common")
                   (:file "main")
                   (:file "triangle"))))
   :build-operation "program-op"
