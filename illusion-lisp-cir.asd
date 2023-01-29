@@ -1,3 +1,7 @@
+#+sb-core-compression
+(defmethod asdf:perform ((o asdf:image-op) (c asdf:system))
+  (uiop:dump-image (asdf:output-file o c) :executable t :compression t))
+
 (defsystem "illusion-lisp-cir"
   :version "0.1.0"
   :author ""
@@ -13,7 +17,7 @@
                   (:file "main")
                   (:file "triangle")
                   (:file "circle"))))
-  :build-operation "program-op"
+  :build-operation program-op
   :build-pathname "dist/illusion-lisp-cir"
   :entry-point "illusion-lisp-cir:main"
   :description ""
