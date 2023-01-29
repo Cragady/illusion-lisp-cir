@@ -14,7 +14,7 @@
                   (:file "triangle"))))
   :build-operation "program-op"
   :build-pathname "illusion-lisp-cir"
-  :entry-point "illusion-lisp-cir::main"
+  :entry-point "illusion-lisp-cir:main"
   :description ""
   :in-order-to ((test-op (test-op "illusion-lisp-cir/tests"))))
 

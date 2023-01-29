@@ -7,4 +7,5 @@
    #:init
    #:cleanup
    #:main-loop
-   #:common))
+   #:common
+   #:main))
