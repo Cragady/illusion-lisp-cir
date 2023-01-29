@@ -11,7 +11,8 @@
                   (:file "utils")
                   (:file "common")
                   (:file "main")
-                  (:file "triangle"))))
+                  (:file "triangle")
+                  (:file "circle"))))
   :build-operation "program-op"
   :build-pathname "dist/illusion-lisp-cir"
   :entry-point "illusion-lisp-cir:main"
