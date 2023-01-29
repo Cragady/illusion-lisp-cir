@@ -2,10 +2,17 @@
   :version "0.1.0"
   :author ""
   :license ""
-  :depends-on ()
+  :depends-on (glop cl-opengl static-vectors 3bgl-shader opticl sb-cga mathkit)
+  ;; :depends-on (glop cl-opengl static-vectors opticl sb-cga mathkit)
+  :serial t
   :components ((:module "src"
                 :components
-                ((:file "main"))))
+                ((:file "package")
+                  (:file "main")
+                  (:file "triangle"))))
+  :build-operation "program-op"
+  :build-pathname "illusion-lisp-cir"
+  :entry-point "illusion-lisp-cir::main"
   :description ""
   :in-order-to ((test-op (test-op "illusion-lisp-cir/tests"))))
 
