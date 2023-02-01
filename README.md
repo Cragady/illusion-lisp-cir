@@ -19,4 +19,3 @@ Getting lisp in a working state was much easier on Linux.
 * Figure out the foreign library shipments and filtering (much later)
     * https://github.com/Shinmera/deploy
     * https://lispcookbook.github.io/cl-cookbook/scripting.html
-* Figure out symlink hell (???)
