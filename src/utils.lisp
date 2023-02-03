@@ -3,6 +3,8 @@
 (defun radians (degrees)
   (float (* degrees (/ pi 180)) 1.0))
 
+;; (defun degree-from-positioning)
+
 (defun get-uniform (program name)
   (gl:get-uniform-location
    ;; simplify things by reusing the name
