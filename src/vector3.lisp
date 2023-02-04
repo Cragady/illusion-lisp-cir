@@ -19,9 +19,17 @@
   (make-instance 'vector3 :x x :y y :z z))
 
 (defmethod add ((a vector3) (b vector3))
-  (create-vector3 (+ (vector3-x a) (vector3-x b))
+  (make-vector3 (+ (vector3-x a) (vector3-x b))
     (+ (vector3-y a) (vector3-y b))
     (+ (vector3-z a) (vector3-z b))))
+
+(defmethod subtract ((a vector3) (b vector3))
+  (make-vector3 (- (vector3-x a) (vector3-x b))
+    (- (vector3-y a) (vector3-y b))
+    (- (vector3-z a) (vector3-z b))))
+
+(defmethod zero ()
+  (make-vector3 0 0 0))
 
 (defmethod distance ((a vector3) (b vector3))
   (sqrt (+ (expt (- (vector3-x a) (vector3-x b)) 2)

@@ -91,10 +91,11 @@
     shader-program))
 
 
-(defun circle1-build-vao (w vertex-data)
+(defun circle1-build-vao (w vertex-data index-data)
   ;; cl-opengl has shortcuts to create 1 of most objects where the GL
   ;; API creates N at a time
   (let ((vbo (gl:gen-buffer))
+        (ebo (gl:gen-buffer))
         (vao (gl:gen-vertex-array)))
     ;; bind the Vertex Array Object first, then bind and set
     ;; vertex buffer(s) and attribute pointer(s)
@@ -111,22 +112,28 @@
     (static-vectors:with-static-vector (sv (length vertex-data)
                                            ;; for now assuming all floats
                                            :element-type 'single-float)
+      ;; copy the vertex data into the static-vector
       (replace sv vertex-data)
+      ;; and send it to GL. Package is %gl since we are using the
+      ;; low-level API
       (%gl:buffer-data :array-buffer
-                       (* (length sv)
-                          (cffi:foreign-type-size :float))
-                       (static-vectors:static-vector-pointer sv)
-                       :static-draw)
-
-      ;; %gl since using the low-level API
-      (%gl:buffer-data :array-buffer
-                       ;; we do'nt have a convenient 'sizeof', so
-                       ;; need to calculate the number of octets we
-                       ;; are passing to GL manually
+                       ;; we don't have a convenient 'sizeof', so need
+                       ;; to calculate the number of octets we are
+                       ;; passing to GL manually
                        (* (length sv)
                           (cffi:foreign-type-size :float))
                        ;; pass the pointer for the static-vector
                        ;; array to GL
+                       (static-vectors:static-vector-pointer sv)
+                       :static-draw))
+
+    (gl:bind-buffer :element-array-buffer ebo)
+    (static-vectors:with-static-vector (sv (length index-data)
+                                           :element-type '(unsigned-byte 32))
+      (replace sv index-data)
+      (%gl:buffer-data :element-array-buffer
+                       (* (length index-data)
+                          (cffi:foreign-type-size :unsigned-int))
                        (static-vectors:static-vector-pointer sv)
                        :static-draw))
 
@@ -140,13 +147,14 @@
                               0)
     (gl:enable-vertex-attrib-array 0)
 
-    ;; Note that this is allowed, the call to
-    ;; glVertexAttribPointer registered VBO as the currently bound
-    ;; vertex buffer object so afterwards we can safely unbind
+    ;; Note that this is allowed, the call to glVertexAttribPointer
+    ;; registered VBO as the currently bound vertex buffer object so
+    ;; afterwards we can safely unbind
     (gl:bind-buffer :array-buffer 0)
 
-    ;; keep track of the VBO so we can delete it later
+    ;; keep track of the buffer objects so we can delete them later
     (push vbo (buffers w))
+    (push ebo (buffers w))
 
     ;; Unbind VAO (it's always a good thing to unbind any
     ;; buffer/array to prevent strange bugs)
@@ -159,9 +167,13 @@
         (circle1-build-shader :vertex-shader 'circle1/shaders::vertex
                                 :fragment-shader 'circle1/shaders::fragment))
   (setf (vao w)
-        (circle1-build-vao w '(-0.5 -0.5 0.0 ; Left
-                                 0.5 -0.5 0.0  ; Right
-                                 0.0 0.5 0.0) ; Top
+        (circle1-build-vao w
+                             '(0.5 0.5 0.0   ; Top Right
+                               0.5 -0.5 0.0  ; Bottom Right
+                               -0.5 -0.5 0.0 ; Bottom Left
+                               -0.5 0.5 0.0) ; Top Left
+                             '(0 1 3         ; first triangle
+                               1 2 3)        ; second triangle
                              )))
 
 (defmethod cleanup ((w circle1))
@@ -171,10 +183,11 @@
 
 
 (defmethod draw ((w circle1))
-  ;; draw our first circle
+  ;; draw our first triangle
   (gl:use-program (shader-program w))
   (gl:bind-vertex-array (vao w))
-  (gl:draw-arrays :triangles 0 3)
+  ;; using the low-level api from %gl again
+  (%gl:draw-elements :triangles 6 :unsigned-int 0)
   (gl:bind-vertex-array 0))
 
 #++ (common 'circle1)
